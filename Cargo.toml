@@ -11,9 +11,14 @@ categories = ["api-bindings", "encoding", "compression",
 	"multimedia::audio", "multimedia::encoding"]
 
 repository = "https://github.com/cijiugechu/opus2"
-documentation = "https://docs.rs/opus2/0.3.0/opus2"
+documentation = "https://docs.rs/opus2"
 
 edition = "2024"
 
 [dependencies]
-libopus_sys = {version = "0.3.0", features = ["static"]}
+libopus_sys = "0.3"
+
+[features]
+default = ["static"]
+static = ["libopus_sys/static"]
+dynamic = ["libopus_sys/dynamic"]
