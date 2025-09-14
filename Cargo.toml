@@ -1,6 +1,6 @@
 [package]
 name = "opus2"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["nemurubaka <cijiugechu@gmail.com>", "Tad Hardesty <tad@platymuus.com>"]
 
 description = "Safe Rust bindings for libopus"
@@ -16,4 +16,4 @@ documentation = "https://docs.rs/opus2/0.3.0/opus2"
 edition = "2024"
 
 [dependencies]
-audiopus_sys = "0.2.0"
+libopus_sys = {version = "0.3.0", features = ["static"]}
