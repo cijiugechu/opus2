@@ -4,12 +4,12 @@
  * http://lists.xiph.org/pipermail/opus/2012-November/001834.html
  */
 
-extern crate opus;
+
 
 #[test]
 fn test_overflow() {
 	const PACKETSIZE: usize = 16909318;
-	const CHANNELS: opus::Channels = opus::Channels::Stereo;
+	const CHANNELS: opus2::Channels = opus2::Channels::Stereo;
 	const FRAMESIZE: usize = 5760;
 
 	let mut input = vec![0xff; PACKETSIZE];
@@ -19,11 +19,11 @@ fn test_overflow() {
 	input[1] = 0x41;
 	*input.last_mut().unwrap() = 0x0b;
 
-	let mut decoder = opus::Decoder::new(48000, CHANNELS).unwrap();
+	let mut decoder = opus2::Decoder::new(48000, CHANNELS).unwrap();
 	let result = decoder.decode(&input[..], &mut output[..], false);
 	drop(decoder);
 	drop(input);
 	drop(output);
 
-	assert_eq!(result.unwrap_err().code(), opus::ErrorCode::InvalidPacket);
+	assert_eq!(result.unwrap_err().code(), opus2::ErrorCode::InvalidPacket);
 }

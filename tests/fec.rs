@@ -1,7 +1,6 @@
 //! Test that supplying empty packets does forward error correction.
 
-extern crate opus;
-use opus::*;
+use opus2::*;
 
 #[test]
 fn blah() {
