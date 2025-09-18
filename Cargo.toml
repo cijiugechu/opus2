@@ -1,6 +1,6 @@
 [package]
 name = "opus2"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["nemurubaka <cijiugechu@gmail.com>", "Tad Hardesty <tad@platymuus.com>"]
 
 description = "Safe Rust bindings for libopus"
@@ -16,9 +16,10 @@ documentation = "https://docs.rs/opus2"
 edition = "2024"
 
 [dependencies]
-libopus_sys = "0.3"
+libopus_sys = "0.3.2"
 
 [features]
 default = ["static"]
 static = ["libopus_sys/static"]
 dynamic = ["libopus_sys/dynamic"]
+bundled = ["libopus_sys/bundled"]
