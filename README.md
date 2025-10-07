@@ -19,6 +19,12 @@ By default, you need either:
 
 These requirements come from [libopus_sys](https://crates.io/crates/libopus_sys), where details about overriding these defaults can be found.
 
+## Features
+
+- `static` (default): Statically link to libopus
+- `dynamic`: Dynamically link to libopus
+- `bundled`: Build and bundle libopus from source
+
 ## License
 
 Licensed under either of
