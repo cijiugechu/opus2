@@ -60,9 +60,11 @@ pub enum Channels {
 /// The available bandwidth level settings.
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 #[repr(i32)]
+#[derive(Default)]
 pub enum Bandwidth {
 	/// Auto/default setting.
-	Auto = ffi::OPUS_AUTO,
+	#[default]
+ Auto = ffi::OPUS_AUTO,
 	/// 4kHz bandpass.
 	Narrowband = ffi::OPUS_BANDWIDTH_NARROWBAND as i32,
 	/// 6kHz bandpass.
@@ -106,11 +108,6 @@ impl Bandwidth {
 	}
 }
 
-impl Default for Bandwidth {
-	fn default() -> Self {
-		Bandwidth::Auto
-	}
-}
 
 /// Possible error codes.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
@@ -188,9 +185,11 @@ impl Bitrate {
 /// Possible signal types. Hints for the encoder's mode selection.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(i32)]
+#[derive(Default)]
 pub enum Signal {
 	/// Auto/default setting.
-	Auto = ffi::OPUS_AUTO,
+	#[default]
+ Auto = ffi::OPUS_AUTO,
 	/// Bias thresholds towards choosing LPC or Hybrid modes.
 	Voice = ffi::OPUS_SIGNAL_VOICE as i32,
 	/// Bias thresholds towards choosing MDCT modes.
@@ -215,18 +214,15 @@ impl Signal {
 	}
 }
 
-impl Default for Signal {
-	fn default() -> Self {
-		Signal::Auto
-	}
-}
 
 /// Possible frame sizes. Controls encoder's use of variable duration frames.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[repr(i32)]
+#[derive(Default)]
 pub enum FrameSize {
 	/// Select frame size from the argument (default).
-	Arg = ffi::OPUS_FRAMESIZE_ARG as i32,
+	#[default]
+ Arg = ffi::OPUS_FRAMESIZE_ARG as i32,
 	/// Use 2.5 ms frames.
 	Ms2_5 = ffi::OPUS_FRAMESIZE_2_5_MS as i32,
 	/// Use 5 ms frames.
@@ -279,11 +275,6 @@ impl FrameSize {
 	}
 }
 
-impl Default for FrameSize {
-	fn default() -> Self {
-		FrameSize::Arg
-	}
-}
 
 /// Get the libopus version string.
 ///
