@@ -683,10 +683,37 @@ macro_rules! encoder_ctls {
 				Ok(value != 0)
 			}
 
-			// TODO(#5): OPUS_SET/GET_DRED_DURATION (since Opus 1.5)
-			// TODO(#5): OPUS_SET_DNN_BLOB (since Opus 1.5)
-		}
-	};
+			/// Set the DRED duration in milliseconds.
+			///
+			/// The duration must be between 0 and 20000 (20 seconds). DRED (Deep REDundancy) 
+			/// provides additional redundancy information that can be used for packet loss recovery.
+			/// This feature is available since Opus 1.5.
+			pub fn set_dred_duration(&mut self, duration_ms: i32) -> Result<()> {
+				ctl!($fn, self, ffi::OPUS_SET_DRED_DURATION_REQUEST, duration_ms);
+				Ok(())
+			}
+
+			/// Get the configured DRED duration in milliseconds.
+			///
+			/// DRED (Deep REDundancy) provides additional redundancy information that can be used 
+			/// for packet loss recovery. This feature is available since Opus 1.5.
+			pub fn get_dred_duration(&mut self) -> Result<i32> {
+				let mut value: i32 = 0;
+				ctl!($fn, self, ffi::OPUS_GET_DRED_DURATION_REQUEST, &mut value);
+				Ok(value)
+			}
+
+			/// Set a DNN (Deep Neural Network) model blob for the encoder.
+			///
+			/// This allows loading custom neural network models for enhanced encoding.
+			/// The blob should contain a trained DNN model in the format expected by libopus.
+			/// This feature is available since Opus 1.5.
+			pub fn set_dnn_blob(&mut self, blob: &[u8]) -> Result<()> {
+				ctl!($fn, self, ffi::OPUS_SET_DNN_BLOB_REQUEST, blob.as_ptr(), len(blob));
+				Ok(())
+			}
+	}
+};
 }
 
 generic_ctls!(Encoder, opus_encoder_ctl);
