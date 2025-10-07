@@ -1145,6 +1145,22 @@ pub struct MSEncoder {
 	channels: c_int,
 }
 
+/// A surround sound multistream encoder with its configuration.
+///
+/// Returned by [`MSEncoder::new_surround`] to provide both the encoder and
+/// information about the stream configuration that was automatically determined.
+#[derive(Debug)]
+pub struct SurroundEncoder {
+	/// The multistream encoder instance.
+	pub encoder: MSEncoder,
+	/// The number of streams that will be used.
+	pub streams: u8,
+	/// The number of coupled (stereo) streams.
+	pub coupled_streams: u8,
+	/// Channel mapping array showing how input channels map to streams.
+	pub mapping: Vec<u8>,
+}
+
 impl Drop for MSEncoder {
 	fn drop(&mut self) {
 		unsafe { ffi::opus_multistream_encoder_destroy(self.ptr) }
@@ -1182,8 +1198,62 @@ impl MSEncoder {
 		}
 	}
 
-	// TODO: new_surround -> opus_multistream_encoder_create, but it's missing
-	// Doxygen comments.
+	/// Create and initialize a multistream encoder for surround sound.
+	///
+	/// This is a convenience function that automatically determines the optimal
+	/// stream configuration based on the number of channels and mapping family.
+	/// It eliminates the need to manually calculate the number of streams, coupled
+	/// streams, and channel mapping.
+	///
+	/// # Arguments
+	///
+	/// * `sample_rate` - Sampling rate of input signal (Hz). Must be one of 8000, 12000,
+	///   16000, 24000, or 48000.
+	/// * `channels` - Number of channels in the input signal. This must be at most 255.
+	/// * `mapping_family` - Mapping family for the surround configuration:
+	///   - `0`: Mono or stereo (1 or 2 channels)
+	///   - `1`: Vorbis channel order for up to 8 channels
+	///   - `255`: No predefined channel ordering (up to 255 channels)
+	/// * `application` - The application type (Voip, Audio, or LowDelay)
+	///
+	/// # Returns
+	///
+	/// Returns a [`SurroundEncoder`] containing the initialized encoder and its
+	/// automatically determined stream configuration.
+	pub fn new_surround(
+		sample_rate: u32,
+		channels: u8,
+		mapping_family: i32,
+		application: Application,
+	) -> Result<SurroundEncoder> {
+		let mut error = 0;
+		let mut streams: c_int = 0;
+		let mut coupled_streams: c_int = 0;
+		let mut mapping = vec![0u8; channels as usize];
+		
+		let ptr = unsafe {
+			ffi::opus_multistream_surround_encoder_create(
+				sample_rate as i32,
+				channels as c_int,
+				mapping_family,
+				&mut streams,
+				&mut coupled_streams,
+				mapping.as_mut_ptr(),
+				application as c_int,
+				&mut error,
+			)
+		};
+		if error != (ffi::OPUS_OK as c_int) || ptr.is_null() {
+			Err(Error::from_code("opus_multistream_surround_encoder_create", error))
+		} else {
+			Ok(SurroundEncoder {
+				encoder: MSEncoder { ptr, channels: channels as c_int },
+				streams: streams as u8,
+				coupled_streams: coupled_streams as u8,
+				mapping,
+			})
+		}
+	}
 
 	/// Encode an Opus frame.
 	pub fn encode(&mut self, input: &[i16], output: &mut [u8]) -> Result<usize> {
